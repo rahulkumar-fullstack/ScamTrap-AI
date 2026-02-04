@@ -1,0 +1,1 @@
+# ScamTrap-AI
