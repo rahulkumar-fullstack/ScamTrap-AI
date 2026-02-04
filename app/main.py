@@ -1,16 +1,26 @@
 from fastapi import FastAPI, Depends
 from app.auth import verify_api_key
 from app.scam_detector import is_scam
+from app.agent import generate_reply
 
 app = FastAPI(title="ScamTrap AI Honeypot")
 
 @app.post("/detect", dependencies=[Depends(verify_api_key)])
 def detect(message: dict):
     text = message.get("text", "")
-    result = is_scam(text)
+    scam = is_scam(text)
+
+    if scam:
+        reply = generate_reply()
+        return {
+            "status": "success",
+            "scamDetected": True,
+            "reply": reply
+        }
 
     return {
-        "scamDetected": result
+        "status": "clean",
+        "scamDetected": False
     }
 
 '''
