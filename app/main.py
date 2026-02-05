@@ -9,7 +9,7 @@ from app.callback import send_final_callback
 
 app = FastAPI(title="ScamTrap AI Honeypot")
 
-@app.post("/detect", dependencies=[Depends(verify_api_key)])
+@app.post("/", dependencies=[Depends(verify_api_key)])
 def detect(payload: dict):
     session_id = payload.get("sessionId")
     message = payload.get("message", {})
