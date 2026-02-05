@@ -4,6 +4,8 @@ from app.scam_detector import is_scam
 from app.agent import generate_reply
 from app.session_manager import update_session, get_session, add_intelligence
 from app.intelligence import extract_intelligence
+from app.session_manager import should_finalize
+from app.callback import send_final_callback
 
 app = FastAPI(title="ScamTrap AI Honeypot")
 
@@ -26,6 +28,9 @@ def detect(payload: dict):
             "sender": "agent",
             "text": reply
         })
+
+        if should_finalize(session_id):
+            send_final_callback(session_id)
 
         session_data = get_session(session_id)
 

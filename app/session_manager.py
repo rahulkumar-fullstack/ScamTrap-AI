@@ -27,3 +27,7 @@ def add_intelligence(session_id: str, intel: dict):
 
 def get_session(session_id: str):
     return sessions[session_id]
+
+
+def should_finalize(session_id: str, threshold: int = 6) -> bool:
+    return sessions[session_id]["total_messages"] >= threshold
