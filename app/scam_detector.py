@@ -1,7 +1,10 @@
 from sentence_transformers import SentenceTransformer, util
 
 # Load MiniLM model once (global)
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer(
+    "all-MiniLM-L6-v2",
+    cache_folder="./models"
+)
 
 # Some Known scam patterns
 SCAM_PATTERNS = [
