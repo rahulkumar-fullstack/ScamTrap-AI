@@ -42,3 +42,9 @@ def detect(payload: dict):
         }
 
     return {"status": "clean"}
+
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
