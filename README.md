@@ -1,66 +1,78 @@
-# ScamTrap-AI
+# 🕵️‍♂️ ScamTrap-AI
 
-ScamTrap-AI is an AI-powered honey-pot system that detects scam messages and engages scammers to extract intelligence like UPI IDs, bank details, and phishing links.
+ScamTrap-AI is an 🤖 AI-powered honeypot system that detects scam messages and actively engages scammers to extract actionable intelligence such as UPI IDs, bank details, and phishing links.
 
-This project was built for the **GUVI Hackathon**.
+🚀 This project was built for the GUVI Hackathon.
 
-🔗 Live API: https://scamtrap-ai.onrender.com/docs
+🌐 Public API (Hosted on **Render**):
+👉 https://scamtrap-ai.onrender.com/docs
+
+
+---
+
+🔍 Overview
+
+ScamTrap-AI works as an autonomous scam-interaction engine:
+
+🚨 Detects scam intent in incoming messages
+
+🧠 Switches to an AI agent when a scam is detected
+
+💬 Engages scammers in realistic conversation
+
+🕵️ Extracts valuable scam intelligence
+
+📦 Returns structured JSON output
+
+
 
 ---
 
-## Overview
+🧰 Tech Stack
 
-The system:
+- ⚡ FastAPI
 
-- Detects scam intent in messages
-- Switches to an autonomous AI agent
-- Engages scammers in conversation
-- Extracts useful scam intelligence
-- Returns structured JSON output
+- 🧠 Sentence Transformers
 
----
-## Tech Stack
+- 📊 Model: all-MiniLM-L6-v2
 
-- FastAPI
-- Sentence Transformers
-- Model: `all-MiniLM-L6-v2`
-- Python
+- 🐍 Python
+
+
 
 ---
-## Architecture
 
-Message → Scam Detection → Agent → Extraction → JSON Response
+🏗️ Architecture
+
+Message → Scam Detection → AI Agent → Data Extraction → JSON Response
+
 
 ---
-## Run Locally
 
-Clone the repo:
+▶️ Run Locally
 
-```bash
+Clone the repository
+```
 git clone https://github.com/rahulkumar-fullstack/ScamTrap-AI.git
 cd ScamTrap-AI
 ```
-
-Install dependencies:
-```bash
+Install dependencies
+```
 pip install -r requirements.txt
 ```
-
-Run server:
-```bash
+Start the server
+```
 uvicorn app.main:app --reload
 ```
-
-Open docs:
+Open API docs
 ```
 http://127.0.0.1:8000/docs
-```
 
+```
 ---
 
-## Example Output
-
-```json
+🧪 Example Output
+```
 {
   "scam_detected": true,
   "extracted_data": {
@@ -68,10 +80,13 @@ http://127.0.0.1:8000/docs
     "urls": ["http://fake-site.com"]
   }
 }
-```
 
+```
 ---
 
-## License
+📜 License
 
 MIT License
+
+
+---
