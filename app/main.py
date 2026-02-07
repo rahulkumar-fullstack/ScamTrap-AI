@@ -6,6 +6,8 @@ from app.session_manager import update_session, get_session, add_intelligence
 from app.intelligence import extract_intelligence
 from app.session_manager import should_finalize
 from app.callback import send_final_callback
+import asyncio
+import httpx
 
 app = FastAPI(title="ScamTrap AI Honeypot")
 
@@ -48,3 +50,18 @@ def detect(payload: dict):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+# Uptime on Render
+async def heartbeat():
+    await asyncio.sleep(30)
+    while True:
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.get("https://scamtrap-ai.onrender.com/health")
+        except Exception:
+            pass
+        await asyncio.sleep(600)  # 10 minutes
+
+@app.on_event("startup")
+async def start_heartbeat():
+    asyncio.create_task(heartbeat())
