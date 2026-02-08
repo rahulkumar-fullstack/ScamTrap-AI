@@ -70,3 +70,22 @@ SCAM_PATTERNS = [
     "QR code failed scan to fix now",
     "Download greeting to view your personalized message"
 ]
+
+# Precompute embeddings for scam patterns
+PATTERN_EMBEDDINGS = model.encode(SCAM_PATTERNS, convert_to_tensor=True)
+
+async def is_scam(message: str, threshold: float = 0.7) -> bool:
+    loop = asyncio.get_event_loop()
+
+    # Encode incoming message off main thread
+    message_embedding = await loop.run_in_executor(
+        None,
+        lambda: model.encode(message, convert_to_tensor=True)
+    )
+
+    similarities = util.cos_sim(message_embedding, PATTERN_EMBEDDINGS)
+    max_similarity = similarities.max().item()
+
+    return max_similarity >= threshold
+
+
