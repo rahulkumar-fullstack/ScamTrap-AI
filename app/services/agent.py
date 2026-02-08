@@ -377,7 +377,7 @@ async def get_intent_embeddings():
 
     async with _lock:
         if _INTENT_EMBEDDINGS is None:
-            model = get_model()
+            model = await get_model()
             loop = asyncio.get_event_loop()
 
             embeddings = {}
@@ -395,7 +395,7 @@ async def get_intent_embeddings():
 
 #Detect scam intent using semantic similarity and generate a reply based on the detected intent category.
 async def detect_intent(message: str, threshold: float = 0.6) -> str:
-    model = get_model()
+    model = await get_model()
     intent_embeddings = await get_intent_embeddings()
 
     loop = asyncio.get_event_loop()
