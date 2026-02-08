@@ -1,17 +1,6 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-
 from app.api.routes import router
-from app.models.model import load_model
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    #print("Loading MiniLM model...")
-    await load_model()
-    #print("Model loaded successfully.")
-    yield
-   #print("Shutting down application...")
+from app.core.lifecycle import lifespan
 
 
 # Create FastAPI instance
