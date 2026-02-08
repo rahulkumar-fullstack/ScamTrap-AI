@@ -209,7 +209,7 @@ async def get_pattern_embeddings():
 
     async with _lock:
         if _PATTERN_EMBEDDINGS is None:
-            model = get_model()
+            model = await get_model()
             loop = asyncio.get_event_loop()
 
             _PATTERN_EMBEDDINGS = await loop.run_in_executor(
@@ -221,7 +221,7 @@ async def get_pattern_embeddings():
 
 
 async def is_scam(message: str, threshold: float = 0.5) -> bool:
-    model = get_model()
+    model = await get_model()
     pattern_embeddings = await get_pattern_embeddings()
     loop = asyncio.get_event_loop()
 
