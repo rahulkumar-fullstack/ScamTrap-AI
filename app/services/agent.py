@@ -1,7 +1,10 @@
 from sentence_transformers import util
 import random
 import asyncio
-from app.services.detector import model 
+from app.models.model import get_model
+
+# Get the loaded model instance
+model = get_model()
 
 INTENT_PATTERNS = {
     "otp_request": [
