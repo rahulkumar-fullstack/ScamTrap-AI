@@ -1,9 +1,9 @@
 from sentence_transformers import SentenceTransformer, util
-from app.core.config import settings
+from app.models.model import get_model
 import asyncio
 
-# Load model once at startup
-model = SentenceTransformer(settings.minilm_model)
+# Get the loaded model instance
+model = get_model()
 
 # Define scam patterns to detect
 SCAM_PATTERNS = [
