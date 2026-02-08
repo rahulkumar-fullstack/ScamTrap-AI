@@ -3,9 +3,6 @@ import random
 import asyncio
 from app.models.model import get_model
 
-# Get the loaded model instance
-model = get_model()
-
 INTENT_PATTERNS = {
     "otp_request": [
         "Send OTP now",
@@ -204,12 +201,6 @@ INTENT_PATTERNS = {
 }
 
 
-INTENT_EMBEDDINGS = {
-    intent: model.encode(samples, convert_to_tensor=True)
-    for intent, samples in INTENT_PATTERNS.items()
-}
-
-
 REPLIES = {
     "otp_request": [
         "Why are you asking for my code?",
@@ -377,8 +368,36 @@ REPLIES = {
     ]
 }
 
+_INTENT_EMBEDDINGS = None
+_lock = asyncio.Lock()
+
+
+async def get_intent_embeddings():
+    global _INTENT_EMBEDDINGS
+
+    async with _lock:
+        if _INTENT_EMBEDDINGS is None:
+            model = get_model()
+            loop = asyncio.get_event_loop()
+
+            embeddings = {}
+
+            for intent, samples in INTENT_PATTERNS.items():
+                embeddings[intent] = await loop.run_in_executor(
+                    None,
+                    lambda s=samples: model.encode(s, convert_to_tensor=True)
+                )
+
+            _INTENT_EMBEDDINGS = embeddings
+
+    return _INTENT_EMBEDDINGS
+
+
 #Detect scam intent using semantic similarity and generate a reply based on the detected intent category.
 async def detect_intent(message: str, threshold: float = 0.6) -> str:
+    model = get_model()
+    intent_embeddings = await get_intent_embeddings()
+
     loop = asyncio.get_event_loop()
 
     message_emb = await loop.run_in_executor(
@@ -389,7 +408,7 @@ async def detect_intent(message: str, threshold: float = 0.6) -> str:
     best_intent = "fallback"
     best_score = 0
 
-    for intent, embeddings in INTENT_EMBEDDINGS.items():
+    for intent, embeddings in intent_embeddings.items():
         scores = util.cos_sim(message_emb, embeddings)
         score = scores.max().item()
 
