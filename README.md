@@ -1,92 +1,119 @@
 # 🕵️‍♂️ ScamTrap-AI
 
-ScamTrap-AI is an 🤖 AI-powered honeypot system that detects scam messages and actively engages scammers to extract actionable intelligence such as UPI IDs, bank details, and phishing links.
+**ScamTrap-AI** is an async AI-powered honeypot that detects scam messages, engages scammers in realistic conversations, and extracts actionable intelligence like UPI IDs, bank accounts, phone numbers, phishing links, and suspicious keywords.  
 
-🚀 This project was built for the GUVI Hackathon.
-
-🌐 Public API (Hosted on **Render**):
-👉 https://scamtrap-ai.onrender.com/docs
-
+🚀 Built for **GUVI Hackathon**  
+🌐 API Docs: [https://scamtrap-ai.onrender.com/docs](https://scamtrap-ai.onrender.com/docs)
 
 ---
 
-🔍 Overview
+## 🔍 Features
 
-ScamTrap-AI works as an autonomous scam-interaction engine:
-
-🚨 Detects scam intent in incoming messages
-
-🧠 Switches to an AI agent when a scam is detected
-
-💬 Engages scammers in realistic conversation
-
-🕵️ Extracts valuable scam intelligence
-
-📦 Returns structured JSON output
-
-
+- Detect scam intent in incoming messages (MiniLM + keywords)  
+- Multi-turn human-like agent replies  
+- Extracts actionable intelligence from scams  
+- Tracks session memory per conversation  
+- Sends final structured intelligence to GUVI callback  
+- `/health` endpoint for uptime monitoring  
 
 ---
 
-🧰 Tech Stack
+## 🧰 Tech Stack
 
-- ⚡ FastAPI
-
-- 🧠 Sentence Transformers
-
-- 📊 Model: all-MiniLM-L6-v2
-
-- 🐍 Python
-
-
+- **FastAPI** (async web framework)  
+- **Sentence Transformers** (MiniLM-L6-v2)  
+- **Python 3.14+**  
+- **httpx** (async HTTP client)  
 
 ---
 
-🏗️ Architecture
+## ▶️ Run Locally
 
-Message → Scam Detection → AI Agent → Data Extraction → JSON Response
-
-
----
-
-▶️ Run Locally
-
-Clone the repository
-```
+```bash
 git clone https://github.com/rahulkumar-fullstack/ScamTrap-AI.git
 cd ScamTrap-AI
-```
-Install dependencies
-```
+python -m venv venv
+# Activate venv
+# Windows: venv\Scripts\activate
+# Linux/Mac: source venv/bin/activate
 pip install -r requirements.txt
-```
-Start the server
-```
 uvicorn app.main:app --reload
 ```
-Open API docs
-```
-http://127.0.0.1:8000/docs
 
-```
----
+## 🧪 Example API Call
 
-🧪 Example Output
+**POST / with header:**
+```
+x-api-key: YOUR_SECRET_API_KEY
+Content-Type: application/json
+```
+
+**Body:**
 ```
 {
-  "scam_detected": true,
-  "extracted_data": {
-    "upi_ids": ["fraud@upi"],
-    "urls": ["http://fake-site.com"]
+  "sessionId": "mega-test",
+  "message": {
+    "sender": "scammer",
+    "text": "URGENT! Your bank account 1234-5678-9012 will be suspended. Verify now by sending payment to scammer@upi or call +919876543210. Click https://secure-bank-verify.in immediately.",
+    "timestamp": "2026-01-21T10:10:00Z"
   }
+}
+```
+
+**Response:**
+```
+{
+  "status": "success",
+  "scamDetected": true,
+  "reply": "I'll check with IT myself.",
+  "intelligence": {
+    "bankAccounts": ["1234-5678-9012", "919876543210"],
+    "upiIds": ["scammer@upi"],
+    "phishingLinks": ["https://secure-bank-verify.in"],
+    "phoneNumbers": ["+919876543210"],
+    "suspiciousKeywords": ["suspended", "urgent", "verify", "payment"]
+  }
+}
+```
+
+## 🛡️ Health Check
+
+```
+GET /health (protected with x-api-key):
+
+{
+  "status": "ok",
+  "service": "ScamTrap AI",
+  "version": "2.0"
+}
+```
+
+## 📦 GUVI Callback
+```
+Once scam detection and agent engagement complete, ScamTrap-AI sends structured intelligence to:
+
+POST https://hackathon.guvi.in/api/updateHoneyPotFinalResult
+```
+
+## Example payload:
+
+```
+{
+  "sessionId": "mega-test",
+  "scamDetected": true,
+  "totalMessagesExchanged": 3,
+  "extractedIntelligence": {
+    "bankAccounts": ["1234-5678-9012", "919876543210"],
+    "upiIds": ["scammer@upi"],
+    "phishingLinks": ["https://secure-bank-verify.in"],
+    "phoneNumbers": ["+919876543210"],
+    "suspiciousKeywords": ["suspended", "urgent", "verify", "payment"]
+  },
+  "agentNotes": "Scammer used urgency, payment request, and phishing link"
 }
 
 ```
----
 
-📜 License
+## 📜 License
 
-MIT License
-
-
----
+- **MIT License**
