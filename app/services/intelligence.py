@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 
-
+BANK_REGEX = re.compile(r"\b\d{4}[- ]?\d{4}[- ]?\d{4}\b")
 UPI_REGEX = r"\b[\w.-]+@[\w.-]+\b"
 PHONE_REGEX = r"\+?\d{10,13}"
 URL_REGEX = r"https?://[^\s]+"
@@ -60,6 +60,10 @@ async def extract_intelligence(messages: list[dict]) -> dict:
     for msg in messages:
         text = msg["text"].lower()
 
+        # Bank accounts
+        bank_matches = re.findall(BANK_REGEX, text)
+        intelligence["bankAccounts"].update(bank_matches)
+
         # UPI IDs
         upi_matches = re.findall(UPI_REGEX, text)
         intelligence["upiIds"].update(upi_matches)
@@ -78,7 +82,7 @@ async def extract_intelligence(messages: list[dict]) -> dict:
                 intelligence["suspiciousKeywords"].add(word)
 
     return {
-        "bankAccounts": [],
+        "bankAccounts": list(intelligence["bankAccounts"]),
         "upiIds": list(intelligence["upiIds"]),
         "phishingLinks": list(intelligence["phishingLinks"]),
         "phoneNumbers": list(intelligence["phoneNumbers"]),
