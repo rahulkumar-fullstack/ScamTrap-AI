@@ -25,7 +25,7 @@ async def heartbeat():
         except Exception as e:
             print("Heartbeat failed:", e)
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(600)
 
 def should_finalize(total_messages: int,intelligence: Dict) -> bool:
     high_value_signal = (
