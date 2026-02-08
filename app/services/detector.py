@@ -1,9 +1,7 @@
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import util
 from app.models.model import get_model
 import asyncio
 
-# Get the loaded model instance
-model = get_model()
 
 # Define scam patterns to detect
 SCAM_PATTERNS = [
@@ -202,10 +200,29 @@ SCAM_PATTERNS = [
     "Coupon activated - provide card to charge shipping"
 ]
 
-# Precompute embeddings for scam patterns
-PATTERN_EMBEDDINGS = model.encode(SCAM_PATTERNS, convert_to_tensor=True)
+_PATTERN_EMBEDDINGS = None
+_lock = asyncio.Lock()
 
-async def is_scam(message: str, threshold: float = 0.7) -> bool:
+
+async def get_pattern_embeddings():
+    global _PATTERN_EMBEDDINGS
+
+    async with _lock:
+        if _PATTERN_EMBEDDINGS is None:
+            model = get_model()
+            loop = asyncio.get_event_loop()
+
+            _PATTERN_EMBEDDINGS = await loop.run_in_executor(
+                None,
+                lambda: model.encode(SCAM_PATTERNS, convert_to_tensor=True)
+            )
+
+    return _PATTERN_EMBEDDINGS
+
+
+async def is_scam(message: str, threshold: float = 0.5) -> bool:
+    model = get_model()
+    pattern_embeddings = await get_pattern_embeddings()
     loop = asyncio.get_event_loop()
 
     # Encode incoming message off main thread
@@ -214,7 +231,7 @@ async def is_scam(message: str, threshold: float = 0.7) -> bool:
         lambda: model.encode(message, convert_to_tensor=True)
     )
 
-    similarities = util.cos_sim(message_embedding, PATTERN_EMBEDDINGS)
+    similarities = util.cos_sim(message_embedding, pattern_embeddings)
     max_similarity = similarities.max().item()
 
     return max_similarity >= threshold
