@@ -5,8 +5,6 @@ from fastapi import FastAPI
 from app.core.config import settings
 from typing import Dict
 
-from app.models.model import load_model
-
 
 RENDER_URL = "https://scamtrap-ai.onrender.com/health"
 
@@ -61,9 +59,6 @@ def generate_agent_notes(intelligence: Dict) -> str:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    #print("Loading MiniLM...")
-    await load_model()
-    #print("Model loaded ✅")
 
     task = asyncio.create_task(heartbeat())
 
